@@ -1,0 +1,42 @@
+In embedded development, the firmware.elf and firmware.bin represent the two different stages of the program's output.
+
+They share the same machine code. However the purpose and metadata vary
+
+firmware.elf is an executable and linkable format 
+
+Contents :
+ Machine code, memory sections, symbol table (names of functions/ variables), debug information and target architecture data.
+ 
+ It is best used for debugging with GDB.
+ 
+ firmware.bin is pure machine code only. It is a byte-by-byte image of what will be written to the microcontroller's memory.
+ 
+ It contains no metadata or addresses. 
+ 
+ CREATION :
+ 
+ The compiler used ( arm-none-eabi-gcc) converts your .c files into Assembly code.
+ 
+The Assembler converts your .s(assembly ) files and compiler output into Object Files(.o).
+
+The linker (arm-none-eabi-ld) takes all .o files and the Linker Script( the .ld) and merges it into the firmware.elf and resolves global addresses(like main or initialized) based on the user defined memory boundaries)
+
+The firmware.bin is used to remove the metadata out it the ELF file. It extracts only the Loadable Segments and saves it into firmware.bin 
+ 
+ ????????????????????????????????????????
+ 
+ FIRMWARE.map is just a memory layout of the firmware. It is produced by the Linker in the last stage for every Make command executed
+ 
+ ?????????????????????????
+ 
+ 
+ WHY USE clean in Makefile?
+ 
+ If a change is done to the Linker Script or a compiler flag, an incremental build could have some missing dependencies. make clean ensures every file is rebuilt from scratch
+ 
+ Also helps in space mangement : Compiling large projects can create a lot of intemediate objects that may not be needed once the final binary is linked
+ 
+ 
+ There is an another option called make distclean :
+ 
+ However , this is not removed for removing the files of folders. Rather it is used to restore the files and folders to the state that was used before the user even started the project
